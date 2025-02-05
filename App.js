@@ -6,9 +6,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 
 const App = () => {
   const [isLogged, setIsLogged] = useState(false)
+  const [useFingerPrintScanner, setUseFingerPrintScanner] = useState(false)
 
   const handleLoggin = () => {
     setIsLogged(true)
+  }
+
+  const handleFingerPrintScanner = (state) => {
+    setUseFingerPrintScanner(state)
   }
 
   const handleLogout = () => {
@@ -16,11 +21,19 @@ const App = () => {
   }
 
   useEffect(()=> {
-    AsyncStorage.getItem('token') && setIsLogged(true)
+    const checkToken = async () => {
+      const tokenExist = await AsyncStorage.getItem('token') 
+
+      return tokenExist ? setIsLogged(true) : setIsLogged(false)
+    
+    }
+    checkToken()
   }, [])
   return (
     <NavigationContainer>
-      {isLogged ? <AppRoute handleLogout={handleLogout} /> : <AuthRoute handleLoggin={handleLoggin}/>}
+      {isLogged ? 
+        <AppRoute handleLogout={handleLogout} handleFingerPrintScanner={handleFingerPrintScanner} /> 
+        : <AuthRoute handleLoggin={handleLoggin} useFingerPrintScanner={useFingerPrintScanner}/>}
     </NavigationContainer>
   )
 }

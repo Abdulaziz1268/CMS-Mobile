@@ -3,10 +3,11 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import * as LocalAuthentication from 'expo-local-authentication'
+import { Toaster, toast } from "sonner-native";
 
-const Settings = ({ handleLogout }) => {
+const Settings = ({ handleLogout, handleFingerPrintScanner }) => {
     const [ fname, setFname ] = useState('')
-    const [ switchOn, setSwithOn ] = useState(false)
+    const [ switchOn, setSwitchOn ] = useState(false)
 
     const logoutHandler = () => {
         AsyncStorage.removeItem('token')
@@ -16,18 +17,33 @@ const Settings = ({ handleLogout }) => {
         handleLogout()
     }
 
+    const saveFingerprint = async () => {
+        await AsyncStorage.setItem('fingerprint', JSON.stringify(true))
+        console.log(AsyncStorage.getItem('fingerprint'))
+    }
+    
+    const unsaveFingerprint = async () => {
+        await AsyncStorage.removeItem('fingerprint')
+    }
+
     const toggleSwitch = async () => {
         try {
            const biometricSupported = await LocalAuthentication.hasHardwareAsync() 
            if(!biometricSupported) {
             return toast.error('biometrics not supported on this device')
            }
-           setSwithOn( prevState => !prevState)
+
+           const isEnroled = await LocalAuthentication.isEnrolledAsync()
+           if(!isEnroled) {
+            return toast.error('no fingerprint enrolled')
+           }
+
+           setSwitchOn( prevState => !prevState)
+           switchOn ? saveFingerprint() : unsaveFingerprint()
+           handleFingerPrintScanner(switchOn)
         } catch (error) {
-            
-        }
-        
-        
+            console.log(error)   
+        }  
     }
     
     useEffect(() => {
@@ -37,9 +53,10 @@ const Settings = ({ handleLogout }) => {
         }
         handleStorage()
     }, [])
-    console.log(AsyncStorage.getItem('fname'))
+
     return ( 
         <View style={styles.settingContainer}>
+            <Toaster position="bottom-center" />
             <View style={styles.profile}>
                 <Text style={styles.profileText}>{`Welcome ${fname}`}</Text>
             </View>

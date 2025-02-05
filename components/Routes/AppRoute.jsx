@@ -7,8 +7,9 @@ import Home from "../Home"
 import Setting from "../Setting"
 import Dashboard from "../Dashboard"
 import { useEffect, useState } from "react"
+import Notification from "../Notifications"
 
-const AppRoute = ({ handleLogout }) => {
+const AppRoute = ({ handleLogout, handleFingerPrintScanner }) => {
   const [role, setRole] = useState('admin')
 
   useEffect(() => {
@@ -34,6 +35,8 @@ const AppRoute = ({ handleLogout }) => {
             icon = focused ? "list" : "list-outline"
           } else if (route.name === "Dashboard") {
             icon = focused ? "stats-chart" : "stats-chart-outline"
+          } else if (route.name === "Notification") {
+            icon = focused ? "notifications" : "notifications-outline"
           } else {
             icon = focused ? "settings" : "settings-outline"
           }
@@ -53,10 +56,9 @@ const AppRoute = ({ handleLogout }) => {
         component={Home}
         options={{ headerShown: false }}
       />
-      {console.log(role == 'admin')}
-      {console.log('admin')}
-      {console.log(role)}
-      {role === '"admin"' && <Tab.Screen name='Dashboard' component={Dashboard} />}
+      
+      {role === '"admin"' && <Tab.Screen name='Dashboard' component={Dashboard} options={{headerShown: false}}/>}
+      {role === '"head"' && <Tab.Screen name='Notification' component={Notification} options={{headerShown: false}}/>}
     
       <Tab.Screen
         name="ComplaintList"
@@ -67,7 +69,7 @@ const AppRoute = ({ handleLogout }) => {
         name="Setting"
         options={{ headerShown: false }}
         >
-        {() => <Setting handleLogout={handleLogout} />}
+        {() => <Setting handleLogout={handleLogout} handleFingerPrintScanner={handleFingerPrintScanner} />}
         </Tab.Screen>
     </Tab.Navigator>
   )

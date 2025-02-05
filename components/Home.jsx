@@ -17,6 +17,7 @@ import { useEffect, useState } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { Picker } from "@react-native-picker/picker"
 import axios from "axios"
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const Home = () => {
   const [modal, setModal] = useState(false)
@@ -61,6 +62,9 @@ const Home = () => {
         </ImageBackground>
 
         <Modal visible={modal} animationType="slide">
+          <View style={styles.closeIcon}>
+            <Ionicons name="close" size={34} color="#005ccc" onPress={() => setModal(false)} />
+          </View>
           <Formik
             initialValues={{
               department: "",
@@ -86,35 +90,39 @@ const Home = () => {
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <View style={styles.inputContainer}>
                   <Text style={styles.label}>Department:</Text>
-                  <Picker
-                    selectedValue={values.department}
-                    onValueChange={(itemValue) =>
-                      setFieldValue("department", itemValue)
-                    }
-                    style={styles.input}
-                  >
-                    {departments.map((item) => (
-                      <Picker.Item
-                        key={item._id}
-                        label={item.name}
-                        value={item.name}
-                      />
-                    ))}
-                  </Picker>
+                  <View style={styles.pickerContainer}>
+                    <Picker
+                      selectedValue={values.department}
+                      onValueChange={(itemValue) =>
+                        setFieldValue("department", itemValue)
+                      }
+                    >
+                      {departments.map((item) => (
+                        <Picker.Item
+                          key={item._id}
+                          label={item.name}
+                          value={item.name}
+                        />
+                      ))}
+                    </Picker>
+                  </View>
+                  
                   <Text style={styles.label}>Severity:</Text>
-                  <Picker
-                    selectedValue={values.severity}
-                    onValueChange={(itemValue) =>
-                      setFieldValue("severity", itemValue)
-                    }
-                    style={styles.input}
-                  >
-                    <Picker.Item label="Very Severe" value="Very Severe" />
-                    <Picker.Item label="Severe" value="Severe" />
-                    <Picker.Item label="Normal" value="Normal" />
-                    <Picker.Item label="Easy" value="Easy" />
-                    <Picker.Item label="Very Easy" value="Very Easy" />
-                  </Picker>
+                  <View style={styles.pickerContainer}>
+                    <Picker
+                      selectedValue={values.severity}
+                      onValueChange={(itemValue) =>
+                        setFieldValue("severity", itemValue)
+                      }
+                    >
+                      <Picker.Item label="Very Severe" value="Very Severe" />
+                      <Picker.Item label="Severe" value="Severe" />
+                      <Picker.Item label="Normal" value="Normal" />
+                      <Picker.Item label="Easy" value="Easy" />
+                      <Picker.Item label="Very Easy" value="Very Easy" />
+                    </Picker>
+                  </View>
+                  
                   <Text style={styles.label}>Description:</Text>
                   <TextInput
                     multiline={true}
@@ -187,6 +195,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 30,
   },
+  pickerContainer: {
+    borderWidth: 2,
+    borderColor: "lightgray",
+    borderRadius: 10,
+    marginBottom: 30,
+    height: 50,
+    justifyContent: 'center'
+    
+  },
   label: {
     marginBottom: 10,
   },
@@ -200,4 +217,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 30,
   },
+  closeIcon: {
+    alignItems: 'flex-end',
+    width: '99%',
+    paddingRight: 20,
+    paddingTop: 20
+  }
 })

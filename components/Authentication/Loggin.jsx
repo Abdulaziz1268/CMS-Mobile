@@ -5,8 +5,36 @@ import Register from "./Register";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Toaster, toast } from "sonner-native";
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { useEffect, useState } from "react"
+import * as LocalAuthentication from 'expo-local-authentication'
 
 const Loggin = ({ navigation, handleLoggin }) => {
+    const [authenticated, setAuthenticated] = useState(false)
+    const [useFingerPrintScanner, setUseFingerPrintScanner] = useState(false)
+    
+    const handleAuthentication = async () => {
+        const result = await LocalAuthentication.authenticateAsync({
+            promptMessage: 'Authenticate with fingerprint',
+            fallbackLabel: 'use password'
+        })
+        if(result.success) {
+            setAuthenticated(true)
+            toast.success('successfull authenticated')
+            handleLoggin()
+        } else {
+            setAuthenticated(false)
+        }
+    }
+
+    useEffect(() => {
+        const toggleFingerprint = async () => {
+            const tokenExist = await AsyncStorage.getItem('fingerprint')
+            console.log(tokenExist)
+            tokenExist ? setUseFingerPrintScanner(true) : setUseFingerPrintScanner(false)
+        }
+        toggleFingerprint()
+    }, [])
     
     return (
         <Formik
@@ -57,10 +85,13 @@ const Loggin = ({ navigation, handleLoggin }) => {
                             secureTextEntry
                         />
                         <Text style={styles.dummyText}></Text>
-                        <TouchableOpacity onPress={() => formikProps.handleSubmit()} style={styles.button}>
-                            <Text style={styles.buttonText}>Loggin</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.button}>
+                        <View style={styles.fingerPrintContainer}>
+                            <TouchableOpacity onPress={() => formikProps.handleSubmit()} style={styles.button}>
+                                <Text style={styles.buttonText}>Loggin</Text>
+                            </TouchableOpacity>
+                            {useFingerPrintScanner && <Ionicons name="finger-print" size={45} color="#005ccc" onPress={handleAuthentication}/>}
+                        </View>
+                        <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.button2}>
                             <Text style={styles.buttonText}>Create account</Text>
                         </TouchableOpacity>
                     </View>
@@ -90,7 +121,8 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: 'lightgray',
         borderRadius: 10,
-        marginBottom: 30
+        marginBottom: 30,
+        backgroundColor: '#ededed'
     },
     inputLable: {
         marginBottom: 10
@@ -101,12 +133,26 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: "#005ccc",
         marginBottom: 20,
+        marginRight: 10,
         height: 50,
         borderRadius: 30,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        width: '80%'
+    },
+    button2: {
+        backgroundColor: "#005ccc",
+        marginBottom: 20,
+        marginRight: 10,
+        height: 50,
+        borderRadius: 30,
+        justifyContent: 'center',
     },
     buttonText: {
         textAlign: 'center',
         color: 'white'
+    },
+    fingerPrintContainer: {
+        flexDirection: 'row',
+        width: '100%'
     }
 })
