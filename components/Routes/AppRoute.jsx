@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
-import Ionicons from "@expo/vector-icons/Ionicons"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { Ionicons } from "@expo/vector-icons"
 import ComplaintList from "../complaintList"
 import Home from "../Home"
 import Setting from "../Setting"
@@ -10,18 +10,18 @@ import { useEffect, useState } from "react"
 import Notification from "../Notifications"
 
 const AppRoute = ({ handleLogout, handleFingerPrintScanner }) => {
-  const [role, setRole] = useState('admin')
+  const [role, setRole] = useState("admin")
 
   useEffect(() => {
     const handleStorage = async () => {
-        const storedData = await AsyncStorage.getItem('role')
-        setRole(storedData)
+      const storedData = await AsyncStorage.getItem("role")
+      setRole(storedData)
     }
     handleStorage()
   }, [])
 
   const Tab = createBottomTabNavigator()
-  
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -56,21 +56,35 @@ const AppRoute = ({ handleLogout, handleFingerPrintScanner }) => {
         component={Home}
         options={{ headerShown: false }}
       />
-      
-      {role === '"admin"' && <Tab.Screen name='Dashboard' component={Dashboard} options={{headerShown: false}}/>}
-      {role === '"head"' && <Tab.Screen name='Notification' component={Notification} options={{headerShown: false}}/>}
-    
+
+      {role === '"admin"' && (
+        <Tab.Screen
+          name="Dashboard"
+          component={Dashboard}
+          options={{ headerShown: false }}
+        />
+      )}
+      {role === '"head"' && (
+        <Tab.Screen
+          name="Notification"
+          component={Notification}
+          options={{ headerShown: false }}
+        />
+      )}
+
       <Tab.Screen
         name="ComplaintList"
         component={ComplaintList}
         options={{ headerShown: false }}
       />
-      <Tab.Screen
-        name="Setting"
-        options={{ headerShown: false }}
-        >
-        {() => <Setting handleLogout={handleLogout} handleFingerPrintScanner={handleFingerPrintScanner} />}
-        </Tab.Screen>
+      <Tab.Screen name="Setting" options={{ headerShown: false }}>
+        {() => (
+          <Setting
+            handleLogout={handleLogout}
+            handleFingerPrintScanner={handleFingerPrintScanner}
+          />
+        )}
+      </Tab.Screen>
     </Tab.Navigator>
   )
 }

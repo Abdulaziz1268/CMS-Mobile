@@ -42,7 +42,7 @@ const Dashboard = () => {
       <Text>Dashboard</Text>
 
       <DataCotext.Provider value={{ departments, users, complaints }}>
-        <DeparmentScreen />
+        {/* <DeparmentScreen /> */}
         <View style={styles.metrics}>
           <TouchableOpacity style={styles.countBox}>
             <Text style={styles.countText}>Departments</Text>
