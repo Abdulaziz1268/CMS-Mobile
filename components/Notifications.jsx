@@ -24,6 +24,8 @@ const Notification = () => {
       .then((result) => {
         setMessages(result.data)
       })
+headApi.get('unreadedcomplaintList')
+.then(res => console.log(res)
   }, [])
   return (
     <View style={styles.notificationContainer}>
