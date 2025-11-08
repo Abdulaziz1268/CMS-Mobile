@@ -14,8 +14,9 @@ const ComplaintList = () => {
                 setData(response.data);
             })
             .catch(error => {
-                console.log(error);  // Added error handling
+                console.log(error);  
             });
+
     }, []);
 
   return (
